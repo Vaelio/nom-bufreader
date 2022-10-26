@@ -147,6 +147,8 @@ impl<R: Read, O, E, P> Parse<O, E, P> for bufreader::BufReader<R> {
     {
         let mut eof = false;
         let mut error = None;
+        let mut count = 0;
+
         loop {
             let opt =
                     //match p(input.buffer()) {
@@ -161,13 +163,17 @@ impl<R: Read, O, E, P> Parse<O, E, P> for bufreader::BufReader<R> {
                             Some((offset, o))
                         },
                 };
-
             match opt {
                 Some((sz, o)) => {
                     self.consume(sz);
                     return Ok(o);
                 }
                 None => {
+                    if count == 3 {
+                        eof = true;
+                    }
+                    count +=1;
+
                     if eof {
                         return Err(Error::Eof);
                     }
@@ -205,6 +211,8 @@ impl<R: AsyncRead + Unpin + Send, O: Send, E, P> AsyncParse<O, E, P> for BufRead
     where
         for<'a> P: Parser<&'a [u8], O, E> + Send + 'async_trait,
     {
+        let mut count = 0;
+        let mut eof = false;
         loop {
             let opt =
                     //match p(input.buffer()) {
@@ -226,6 +234,15 @@ impl<R: AsyncRead + Unpin + Send, O: Send, E, P> AsyncParse<O, E, P> for BufRead
                     return Ok(o);
                 }
                 None => {
+                    if count == 3 {
+                        eof = true;
+                    }
+                    count +=1;
+
+                    if eof {
+                        return Err(Error::Eof);
+                    }
+
                     self.fill_buf().await?;
                 }
             }
