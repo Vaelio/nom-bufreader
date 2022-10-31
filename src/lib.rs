@@ -259,6 +259,8 @@ impl<R: AsyncRead + Unpin + Send, O: Send, E, P> AsyncParse<O, E, P>
     where
         for<'a> P: Parser<&'a [u8], O, E> + Send + 'async_trait,
     {
+        let mut count = 0;
+        let mut eof = false;
         loop {
             let opt =
                     //match p(input.buffer()) {
@@ -280,6 +282,15 @@ impl<R: AsyncRead + Unpin + Send, O: Send, E, P> AsyncParse<O, E, P>
                     return Ok(o);
                 }
                 None => {
+                    if count == 3 {
+                        eof = true;
+                    }
+                    count +=1;
+
+                    if eof {
+                        return Err(Error::Eof);
+                    }
+
                     self.fill_buf().await?;
                 }
             }
