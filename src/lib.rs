@@ -166,10 +166,11 @@ impl<R: Read, O, E, P> Parse<O, E, P> for bufreader::BufReader<R> {
             match opt {
                 Some((sz, o)) => {
                     self.consume(sz);
+                    count = 0;
                     return Ok(o);
                 }
                 None => {
-                    if count == 10 {
+                    if count == 5 {
                         eof = true;
                     }
                     count +=1;
@@ -231,10 +232,11 @@ impl<R: AsyncRead + Unpin + Send, O: Send, E, P> AsyncParse<O, E, P> for BufRead
             match opt {
                 Some((sz, o)) => {
                     self.consume_unpin(sz);
+                    count = 0;
                     return Ok(o);
                 }
                 None => {
-                    if count == 10 {
+                    if count == 5 {
                         eof = true;
                     }
                     count +=1;
@@ -279,10 +281,11 @@ impl<R: AsyncRead + Unpin + Send, O: Send, E, P> AsyncParse<O, E, P>
             match opt {
                 Some((sz, o)) => {
                     self.consume_unpin(sz);
+                    count = 0;
                     return Ok(o);
                 }
                 None => {
-                    if count == 10 {
+                    if count == 5 {
                         eof = true;
                     }
                     count +=1;
