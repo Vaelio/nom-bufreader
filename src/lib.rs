@@ -186,9 +186,14 @@ impl<R: Read, O, E, P> Parse<O, E, P> for bufreader::BufReader<R> {
                     match self.fill_buf() {
                         Err(e) => error = Some(e),
                         Ok(s) => {
+                            if !s.is_empty() {
+                                count = 0;
+                            }
+                            /*
                             if s.is_empty() {
                                 eof = true;
                             }
+                            */
                         }
                     }
                 }
