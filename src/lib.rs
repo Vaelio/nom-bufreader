@@ -169,7 +169,7 @@ impl<R: Read, O, E, P> Parse<O, E, P> for bufreader::BufReader<R> {
                     return Ok(o);
                 }
                 None => {
-                    if count == 6 {
+                    if count == 10 {
                         eof = true;
                     }
                     count +=1;
@@ -234,7 +234,7 @@ impl<R: AsyncRead + Unpin + Send, O: Send, E, P> AsyncParse<O, E, P> for BufRead
                     return Ok(o);
                 }
                 None => {
-                    if count == 6 {
+                    if count == 10 {
                         eof = true;
                     }
                     count +=1;
@@ -282,7 +282,7 @@ impl<R: AsyncRead + Unpin + Send, O: Send, E, P> AsyncParse<O, E, P>
                     return Ok(o);
                 }
                 None => {
-                    if count == 6 {
+                    if count == 10 {
                         eof = true;
                     }
                     count +=1;
